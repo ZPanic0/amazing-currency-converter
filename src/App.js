@@ -10,21 +10,19 @@ const App = () => <>
   <h1>Amazing Currency Converter</h1>
   <p>
     Convert
-    <input type="number" id="original-currency-amount" placeholder="1"></input>
-    <input type="text" id="original-currency-unit" placeholder="original currency"></input>
+    <input type='number' id='original-currency-amount' placeholder='1'></input>
+    <input type='text' id='original-currency-unit' placeholder='original currency'></input>
 to
-<input type="text" id="new-currency-unit" placeholder="new currency"></input>
+<input type='text' id='new-currency-unit' placeholder='new currency'></input>
   </p>
   <p>
     Exchange Rate:
-<input type="number" id="exchange-rate"></input>
+<input type='number' id='exchange-rate'></input>
   </p>
   <button>Exchange my money now!</button>
-  <p id="output-text">
+  <p id='output-text'>
     Converted 💰 will appear here.
 </p>
-
-  <script src="index.pack.js"></script>
 </>
 
 export default App
