@@ -2,7 +2,7 @@
  * Returns an object containing the codes (as keys) and names of all
  * currencies supported by currency.getgeoapi.com.
  */
-export const getCurrencies = async () => ({
+export const getAvailableCurrencies = async () => ({
     AED: "UAE Dirham",
     AFN: "Afghani",
     ALL: "Lek",
