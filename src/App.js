@@ -6,6 +6,7 @@ import { getCurrencyRatio } from './api/getCurrencyRatio'
 import { CurrencyInput } from './components/CurrencyInput'
 import { ExchangeRateDisplay } from './components/ExchangeRateDisplay'
 import { LoadingDisplay } from './components/LoadingDisplay'
+import GitHubIcon from '@material-ui/icons/GitHub'
 
 const useStyles = makeStyles(() => ({
   container: { minHeight: '100vh' },
@@ -95,6 +96,9 @@ const App = () => {
         </>
         : <LoadingDisplay />
     }
+    <Grid item xs={12}>
+      <a href='https://github.com/ZPanic0/amazing-currency-converter' target='_blank'><GitHubIcon color='action' /></a>
+    </Grid>
   </Grid>
 }
 
