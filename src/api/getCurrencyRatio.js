@@ -9,12 +9,14 @@ const stashedModifiers = {}
  * @param {*} from The currency code to convert from
  * @param {*} to The currency code to convert to
  */
-export const getCurrencyModifier = async (from, to) => {
+export const getCurrencyRatio = async (from, to) => {
     if (stashedModifiers[`${from},${to}`]) return stashedModifiers[`${from},${to}`]
 
     const response = await fetch(`https://api.getgeoapi.com/api/v2/currency/convert?api_key=${apiKey}&from=${from}&to=${to}&format=json`)
+    const responseObject = await response.json()
+    const conversionRate = Number(responseObject.rates[to].rate)
+    
+    stashedModifiers[`${from},${to}`] = conversionRate
 
-    stashedModifiers[`${from},${to}`] = response.rates[to].rate
-
-    return response.rates[to].rate
+    return conversionRate
 }
