@@ -1,28 +1,101 @@
-import './App.css'
+import { useEffect, useState } from 'react'
+import { CurrencySelector } from './components/CurrencySelector'
+import { getAvailableCurrencies } from './api/getAvailableCurrencies'
+import { Button, CircularProgress, Grid, makeStyles, Typography } from '@material-ui/core'
+import { getCurrencyRatio } from './api/getCurrencyRatio'
+import { CurrencyInput } from './components/CurrencyInput'
+import { ExchangeRateDisplay } from './components/ExchangeRateDisplay'
+import { LoadingDisplay } from './components/LoadingDisplay'
 
-// Instructions:
+const useStyles = makeStyles(() => ({
+  container: { minHeight: '100vh' },
+  loadingContainer: { minHeight: '64px' }
+}))
 
-// 1. Add the functionality to exchange one currency to another 
-//(you can use a technology of your choice) 🤖
-// 2. Style the app 🎨
+const App = () => {
+  const classes = useStyles()
+  const [loading, setLoading] = useState(true)
+  const [availableCurrencies, setAvailableCurrencies] = useState(null)
+  const [inputValue, setInputValue] = useState(1)
+  const [fromKey, setFromKey] = useState('USD')
+  const [toKey, setToKey] = useState('CAD')
+  const [exchangeRate, setExchangeRate] = useState('')
+  const [convertedValue, setConvertedValue] = useState('Converted 💰 will appear here.')
 
-const App = () => <>
-  <h1>Amazing Currency Converter</h1>
-  <p>
-    Convert
-    <input type='number' id='original-currency-amount' placeholder='1'></input>
-    <input type='text' id='original-currency-unit' placeholder='original currency'></input>
-to
-<input type='text' id='new-currency-unit' placeholder='new currency'></input>
-  </p>
-  <p>
-    Exchange Rate:
-<input type='number' id='exchange-rate'></input>
-  </p>
-  <button>Exchange my money now!</button>
-  <p id='output-text'>
-    Converted 💰 will appear here.
-</p>
-</>
+  useEffect(() => {
+    (async () => {
+      setLoading(true)
+      setExchangeRate(await getCurrencyRatio(fromKey, toKey))
+      setLoading(false)
+    })()
+  }, [fromKey, toKey])
+
+  useEffect(() => {
+    (async () => {
+      const newCurrencies = await getAvailableCurrencies()
+      const conversionRate = await getCurrencyRatio(fromKey, toKey)
+
+      setAvailableCurrencies(newCurrencies)
+      setExchangeRate(conversionRate)
+      setLoading(false)
+    })()
+  }, [])
+
+  return <Grid container className={classes.container} direction='column' alignItems='center' justify='center' spacing={2}>
+    <Grid item xs={12}>
+      <Typography variant='h4'>Amazing Currency Converter</Typography>
+    </Grid>
+    {
+      availableCurrencies
+        ? <>
+          <Grid item xs={12}>
+            <Grid container spacing={3}>
+              <Grid item>
+                <CurrencyInput
+                  value={inputValue}
+                  onChange={setInputValue}
+                />
+              </Grid>
+              <Grid item>
+                <CurrencySelector
+                  helperText='From'
+                  selectedKey={fromKey}
+                  currencies={availableCurrencies}
+                  onChange={setFromKey}
+                />
+              </Grid>
+              <Grid item>
+                <CurrencySelector
+                  helperText='To'
+                  selectedKey={toKey}
+                  currencies={availableCurrencies}
+                  onChange={setToKey}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <ExchangeRateDisplay exchangeRate={exchangeRate} />
+          </Grid>
+          <Grid item xs={12}>
+            <Button disabled={loading} variant='contained' onClick={() => {
+              const result = Math.round(inputValue * exchangeRate * 100) / 100
+
+              setConvertedValue(`${inputValue} ${fromKey} is ${result} in ${toKey}`)
+            }}>
+              Exchange my money now!
+        </Button>
+          </Grid>
+          <Grid item xs={12} className={classes.loadingContainer}>
+            {loading && <CircularProgress />}
+          </Grid>
+          <Grid item xs={12}>
+            <Typography>{convertedValue}</Typography>
+          </Grid>
+        </>
+        : <LoadingDisplay />
+    }
+  </Grid>
+}
 
 export default App
